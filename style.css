@@ -56,3 +56,8 @@ button{
     padding: 10px;
     cursor: pointer;
 }
+button:hover{
+    border-color: white;
+    background-color: black;
+    color: white;
+}

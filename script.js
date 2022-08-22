@@ -11,16 +11,6 @@ const GameBoard = (function () {
         else { return false }
     };
 
-    const showBoard = function () {
-        let output = "";
-        for (let i = 0; i < _board.length; i++) {
-            const sym = _board[i]
-            output += (sym ? sym : '-') + '\t';
-            if ((i + 1) % 3 == 0) { output += '\n' }
-        }
-        console.log(output)
-    };
-
     const getElement = function (field) {
         return _board[field]
     }
@@ -67,7 +57,7 @@ const GameBoard = (function () {
         _board.forEach((val, index) => { _board[index] = '' })
 
     }
-    return { place_mark, showBoard, getElement, checkIfWin, checkIfTie, clear_board }
+    return { place_mark, getElement, checkIfWin, checkIfTie, clear_board }
 
 })()
 
@@ -83,12 +73,9 @@ const Player = function (id, symbol) {
 const Game = (function () {
     const _board = GameBoard;
     const _player_list = [Player(1, "X"), Player(2, "O")];
-    let _game_over = false;
-    let _current_player = _player_list[0];
     const _board_cells = [];
     const _player_text = document.querySelector('#player');
     const _info = document.querySelector('#game-info');
-
 
     const InitBoard = function () {
         const board_container = document.querySelector('#board');
@@ -103,17 +90,18 @@ const Game = (function () {
             board_container.appendChild(cell);
             _board_cells.push(cell);
         };
-
     }
+
+    InitBoard();
 
     const NewGame = function () {
         _board.clear_board();
         _game_over = false;
         _current_player = _player_list[0];
-        _info.textContent = '';
+        _player_text.textContent = `Current player: Player ${_current_player.getId()} (${_current_player.getSymbol()})`;
+        _board_cells.forEach(c => { c.classList.remove("winning-cell") });
         RenderBoard();
     }
-    document.querySelector('#new-game').addEventListener('click', NewGame);
 
     const RenderBoard = function () {
         for (let i = 0; i < 9; i++) {
@@ -121,11 +109,11 @@ const Game = (function () {
         }
     }
 
-    const MarkWinnersCells = function (cells) {
-        console.log(cells)
+    NewGame()
+    document.querySelector('#new-game').addEventListener('click', NewGame);
 
+    const MarkWinnersCells = function (cells) {
         cells_to_mark = cells.map((i) => { return _board_cells[i] });
-        console.log(cells_to_mark)
         cells_to_mark.forEach((cell) => { cell.classList.add("winning-cell") });
     }
 
@@ -135,14 +123,13 @@ const Game = (function () {
             RenderBoard();
             const _win_message = _board.checkIfWin()
             if (_win_message) {
-                _info.textContent = `The winner is: Player ${_current_player.getId()} (${_current_player.getSymbol()})`
+                _player_text.textContent = `The winner is: Player ${_current_player.getId()} (${_current_player.getSymbol()})`
                 _game_over = true;
                 MarkWinnersCells(_win_message[1])
-                console.log(_win_message);
 
             }
             else if (_board.checkIfTie()) {
-                _info.textContent = `Tie! No winner this time`;
+                _player_text.textContent = `Tie! No winner this time`;
                 _game_over = true;
             }
             else { SwitchPlayer() }
@@ -157,13 +144,4 @@ const Game = (function () {
         _player_text.textContent = `Current player: Player ${_current_player.getId()} (${_current_player.getSymbol()})`;
     }
 
-    return {
-        InitBoard,
-        RenderBoard
-    }
-
 })()
-
-Game.InitBoard();
-Game.RenderBoard();
-
