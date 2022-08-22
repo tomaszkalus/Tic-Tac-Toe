@@ -48,8 +48,8 @@ const GameBoard = (function () {
             };
         }
         // check diagonals
-        const ldiag = Array.from({length: _dimension},(x,i) => i * (_dimension + 1));
-        const rdiag = Array.from({length: _dimension},(x,i) => (_dimension - 1) * (i + 1));
+        const ldiag = Array.from({ length: _dimension }, (x, i) => i * (_dimension + 1));
+        const rdiag = Array.from({ length: _dimension }, (x, i) => (_dimension - 1) * (i + 1));
 
         const ldiag_values = ldiag.map((j) => { return _board[j] });
         const rdiag_values = rdiag.map((j) => { return _board[j] });
@@ -124,10 +124,7 @@ const Game = (function () {
     const MarkWinnersCells = function (cells) {
         console.log(cells)
 
-        cells_to_mark = cells.map((i)=>{return _board_cells[i]});
-        // _board_cells.filter((el) => { 
-        //     return cells.includes(el.getAttribute('data-id')) 
-        // });
+        cells_to_mark = cells.map((i) => { return _board_cells[i] });
         console.log(cells_to_mark)
         cells_to_mark.forEach((cell) => { cell.classList.add("winning-cell") });
     }
