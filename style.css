@@ -35,6 +35,10 @@ body{
 
 }
 
+.winning-cell{
+    color: red;
+}
+
 #game-info{
     color: red;
 }

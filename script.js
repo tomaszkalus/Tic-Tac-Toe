@@ -29,7 +29,11 @@ const GameBoard = (function () {
         for (let i = 0; i < _dimension; i++) {
             // check rows
             const row = _board.slice(i * _dimension, (i + 1) * _dimension);
-            if (row.every(v => v === row[0]) && !row.some(v => v == '')) { return [row[0], [i * _dimension, 'row']] };
+
+            if (row.every(v => v === row[0]) && !row.some(v => v == '')) {
+                const cells = Array.from({ length: _dimension }, (x, index) => index + (i * _dimension));
+                return [row[0], cells]
+            };
 
             // check cols
             const col = [];
@@ -37,16 +41,21 @@ const GameBoard = (function () {
                 const pos = (i + _dimension * j)
                 col.push(_board[pos]);
             }
-            if (col.every(v => v === col[0]) && !col.some(v => v == '')) { return [col[0], [i, 'col']] };
+            if (col.every(v => v === col[0]) && !col.some(v => v == '')) {
+                const cells = Array.from({ length: _dimension }, (x, index) => (index * _dimension) + i);
+                return [col[0], cells]
+
+            };
         }
-        const ldiag = [];
-        const rdiag = [];
-        for (let i = 0; i < _dimension; i++) {
-            ldiag.push(_board[i * (_dimension + 1)]);
-            rdiag.push(_board[(_dimension - 1) * (i + 1)]);
-        }
-        if (ldiag.every(v => v === ldiag[0]) && !ldiag.some(v => v == '')) { return [ldiag[0], [0, 'diag']] }
-        if (rdiag.every(v => v === rdiag[0]) && !rdiag.some(v => v == '')) { return [rdiag[0], [_dimension - 1, 'diag']] }
+        // check diagonals
+        const ldiag = Array.from({length: _dimension},(x,i) => i * (_dimension + 1));
+        const rdiag = Array.from({length: _dimension},(x,i) => (_dimension - 1) * (i + 1));
+
+        const ldiag_values = ldiag.map((j) => { return _board[j] });
+        const rdiag_values = rdiag.map((j) => { return _board[j] });
+
+        if (ldiag_values.every(v => v == ldiag_values[0]) && !ldiag_values.some(v => v == '')) { return [ldiag_values[0], ldiag] }
+        if (rdiag_values.every(v => v == rdiag_values[0]) && !rdiag_values.some(v => v == '')) { return [rdiag_values[0], rdiag] }
         return false;
     }
     const checkIfTie = function () {
@@ -111,13 +120,29 @@ const Game = (function () {
             _board_cells[i].textContent = _board.getElement(i)
         }
     }
+
+    const MarkWinnersCells = function (cells) {
+        console.log(cells)
+
+        cells_to_mark = cells.map((i)=>{return _board_cells[i]});
+        // _board_cells.filter((el) => { 
+        //     return cells.includes(el.getAttribute('data-id')) 
+        // });
+        console.log(cells_to_mark)
+        cells_to_mark.forEach((cell) => { cell.classList.add("winning-cell") });
+    }
+
     const Move = function (field) {
         _symbol = _current_player.getSymbol()
         if (_board.place_mark(field, _symbol) && !_game_over) {
             RenderBoard();
-            if (_board.checkIfWin()) {
+            const _win_message = _board.checkIfWin()
+            if (_win_message) {
                 _info.textContent = `The winner is: Player ${_current_player.getId()} (${_current_player.getSymbol()})`
                 _game_over = true;
+                MarkWinnersCells(_win_message[1])
+                console.log(_win_message);
+
             }
             else if (_board.checkIfTie()) {
                 _info.textContent = `Tie! No winner this time`;
