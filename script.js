@@ -1,4 +1,3 @@
-// GameBoard Module
 const GameBoard = (function () {
     const _dimension = 3;
     const _board = Array(_dimension ** 2).fill('')
@@ -15,14 +14,19 @@ const GameBoard = (function () {
         return _board[field]
     }
 
+    const getLegalFields = function () {
+        const indexes = Array.from({ length: _board.length }, (x, i) => i);
+        return indexes.filter(i => { return _board[i] == '' });
+
+    }
+
     const checkIfWin = function () {
         for (let i = 0; i < _dimension; i++) {
             // check rows
             const row = _board.slice(i * _dimension, (i + 1) * _dimension);
 
             if (row.every(v => v === row[0]) && !row.some(v => v == '')) {
-                const cells = Array.from({ length: _dimension }, (x, index) => index + (i * _dimension));
-                return [row[0], cells]
+                return Array.from({ length: _dimension }, (x, index) => index + (i * _dimension));
             };
 
             // check cols
@@ -32,9 +36,7 @@ const GameBoard = (function () {
                 col.push(_board[pos]);
             }
             if (col.every(v => v === col[0]) && !col.some(v => v == '')) {
-                const cells = Array.from({ length: _dimension }, (x, index) => (index * _dimension) + i);
-                return [col[0], cells]
-
+                return Array.from({ length: _dimension }, (x, index) => (index * _dimension) + i);
             };
         }
         // check diagonals
@@ -44,8 +46,9 @@ const GameBoard = (function () {
         const ldiag_values = ldiag.map((j) => { return _board[j] });
         const rdiag_values = rdiag.map((j) => { return _board[j] });
 
-        if (ldiag_values.every(v => v == ldiag_values[0]) && !ldiag_values.some(v => v == '')) { return [ldiag_values[0], ldiag] }
-        if (rdiag_values.every(v => v == rdiag_values[0]) && !rdiag_values.some(v => v == '')) { return [rdiag_values[0], rdiag] }
+        if (ldiag_values.every(v => v == ldiag_values[0]) && !ldiag_values.some(v => v == '')) { return ldiag }
+        if (rdiag_values.every(v => v == rdiag_values[0]) && !rdiag_values.some(v => v == '')) { return rdiag }
+
         return false;
     }
     const checkIfTie = function () {
@@ -59,47 +62,41 @@ const GameBoard = (function () {
     }
 
     const getDimension = function () { return _dimension }
-    return { place_mark, getElement, checkIfWin, checkIfTie, clear_board, getDimension }
+    return { place_mark, getElement, checkIfWin, checkIfTie, clear_board, getDimension, getLegalFields }
 
 })()
 
-const Player = function (id, name, symbol) {
-    const _id = id
+const Player = function (name, symbol) {
     const _symbol = symbol;
     const _name = name;
     const getSymbol = function () { return _symbol };
-    const getId = function () { return _id }
     const getName = function () { return _name }
-    return { getSymbol, getId, getName }
+    return { getSymbol, getName }
 }
-
-document.querySelector('sl-radio-group').addEventListener('sl-change', e =>{
-    const _val = e.target.value
-    if(_val == 1){
-        for(el of document.querySelectorAll('.player2')){
-            el.removeAttribute('hidden', '')
-        }
-        document.querySelector('#difficulty-dropdown').style.display = 'none'
-
-    }
-    else{
-        for(el of document.querySelectorAll('.player2')){
-            el.setAttribute('hidden', '')
-        }
-        document.querySelector('#difficulty-dropdown').style.display = ''
-
-    }
-
-})
 
 // Game module
 const Game = (function () {
     const _board = GameBoard;
-    let _player_list;
     const _board_cells = [];
     const _player_text = document.querySelector('#player');
-    const _info = document.querySelector('#game-info');
+    let _player_list;
     let _ai;
+
+    // 1v1/AI switch
+    document.querySelector('sl-radio-group').addEventListener('sl-change', e => {
+        const _val = e.target.value;
+        if (_val == '1v1') {
+            _ai = false;
+            document.querySelector('#player2').style.display = '';
+            document.querySelector('#difficulty-settings').style.display = 'none';
+
+        }
+        else {
+            _ai = true;
+            document.querySelector('#player2').style.display = 'none';
+            document.querySelector('#difficulty-settings').style.display = '';
+        }
+    })
 
     const InitBoard = function () {
         const board_container = document.querySelector('#board');
@@ -118,16 +115,14 @@ const Game = (function () {
 
     InitBoard();
 
-
-
     const StartGame = function () {
-        _ai = !!document.querySelector('#difficulty-dropdown').value;
+        // _ai = !!document.querySelector('#difficulty-dropdown').value;
         const _player1_name = document.querySelector("#player1").value;
         let _player2_name;
-        if(_ai){_player2_name = '🤡'}
-        else{_player2_name = document.querySelector("#player2").value;}
-        
-        _player_list = [Player(1, _player1_name, "X"), Player(2, _player2_name, "O")];
+        if (_ai) { _player2_name = '🤡' }
+        else { _player2_name = document.querySelector("#player2").value; }
+
+        _player_list = [Player(_player1_name, "X"), Player(_player2_name, "O")];
         document.querySelector('#game-container').removeAttribute('hidden');
         document.querySelector('#options').setAttribute('hidden', '');
         NewGame();
@@ -145,7 +140,10 @@ const Game = (function () {
         _game_over = false;
         _current_player = _player_list[0];
         updatePlayerText();
-        _board_cells.forEach(c => { c.classList.remove("winning-cell") });
+        _board_cells.forEach(c => {
+            c.classList.remove("winning-cell")
+            c.classList.add('clickable');
+        });
         RenderBoard();
     }
 
@@ -167,12 +165,12 @@ const Game = (function () {
         _symbol = _current_player.getSymbol()
         if (_board.place_mark(field, _symbol) && !_game_over) {
             RenderBoard();
-            const _win_message = _board.checkIfWin()
-            if (_win_message) {
+            const _winning_cells = _board.checkIfWin()
+            if (_winning_cells) {
                 _player_text.textContent = `The winner is: ${_current_player.getName()} (${_current_player.getSymbol()})`
                 _player_text.classList.add('info')
                 _game_over = true;
-                MarkWinnersCells(_win_message[1])
+                MarkWinnersCells(_winning_cells)
 
             }
             else if (_board.checkIfTie()) {
@@ -181,28 +179,21 @@ const Game = (function () {
                 _game_over = true;
             }
             else { SwitchPlayer() }
-        }  
+
+            _board_cells[field].classList.remove('clickable')
+            return true;
+        }
+        return false;
     }
 
-    const UserMove = function(field){
-        Move(field)
-
-        if(_ai){
-            const _legal_fields = [];
-            for(let i=0; i < 9; i++){
-                if(_board.getElement(i) == ''){
-                    _legal_fields.push(i);
-
-                }
+    const UserMove = function (field) {
+        if (Move(field)) {
+            if (_ai) {
+                const _legal_fields = _board.getLegalFields()
+                const rand = Math.floor(Math.random() * _legal_fields.length);
+                setTimeout(() => Move(_legal_fields[rand]), 100)
             }
-            console.log(_legal_fields)
-            const rand = Math.floor(Math.random() * _legal_fields.length);
-            setTimeout(() => Move(_legal_fields[rand]), 100)
-            
-
         }
-
-
     }
 
     const SwitchPlayer = function () {
@@ -212,5 +203,61 @@ const Game = (function () {
         else { _current_player = _player_list[0] }
         updatePlayerText();
     }
+
+    const MiniMax = (function(){
+
+        let _board_copy = []
+
+        const _getBoardCopy = () => {
+            _board_copy = []
+            for(let i=0; i<9; i++){
+                _board_copy.push(_board[i])
+            }
+        }
+
+        const evaluate = function(){
+            const win = checkIfWin();
+            if(win){
+                if(_board.getElement[win[0]] = 'x'){
+                    return 10
+                }
+                else{return -10}
+            }
+            return 0
+        }
+
+        const minimax = function(board, depth, index){
+            let score = evaluate(_board);
+            if (score==10){return score}
+            if (score == -10){return score}
+            if (_board.getLegalFields.length = 0){return 0}
+            const isMax = _current_player = _player_list[2]
+            if (isMax){
+                let best = -1000;
+                
+                for(let i=0; i<9; i++){
+                    if(!_board[i]){
+                        Move(i)
+
+                        best = Math.max(best, minimax(_board, depth+1, !isMax));
+
+                    }
+                }
+
+            }
+            else{
+                let best = 1000;
+                for(let i=0; i<9; i++){
+                    if(!_board[i]){
+                        Move(i)
+                        best = Math.max(best, minimax(_board, depth+1, !isMax));
+
+                    }
+                }
+            }
+        }
+
+        return {evaluate}
+    })()
 
 })()

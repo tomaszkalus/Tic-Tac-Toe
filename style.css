@@ -21,6 +21,10 @@ body{
     justify-content: center;
     font-family:Arial, Helvetica, sans-serif;
     font-size: 50px;
+    user-select: none;
+}
+
+.clickable{
     cursor: pointer;
 }
 
@@ -92,11 +96,10 @@ button:hover{
     border-width: 2px;
     border-style: solid;
     border-color: black;
-
 }
 
 #options>button{
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 sl-radio-group{
@@ -104,5 +107,19 @@ sl-radio-group{
 }
 
 #difficulty-dropdown{
-    width: 100px;
+    width: 150px;
+    display: inline;
+    margin-left: 15px;
+}
+
+#difficulty-settings{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+#player1, #player2{
+    margin-bottom: 20px;
+    text-align: left;
 }

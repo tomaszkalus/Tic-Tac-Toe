@@ -23,23 +23,29 @@
 
   <div id="options">
     <sl-radio-group label="Select an option" name="select" value="1">
-      <sl-radio-button value="1">1 vs 1</sl-radio-button>
-      <sl-radio-button value="2">1 vs AI</sl-radio-button>
+      <sl-radio-button value="1v1">1 vs 1</sl-radio-button>
+      <sl-radio-button value="ai">1 vs AI</sl-radio-button>
     </sl-radio-group>
 
     <p>First, enter your names!</p>
-    <label for="text">Player 1:</label>
+    <!-- <label for="text">Player 1:</label>
     <input type="text" id="player1">
     <span>as X</span>
     <br>
     <label for="text" class="player2">Player 2:</label>
     <input type="text" id="player2" class="player2">
-    <span class="player2">as O</span><br>
+    <span class="player2">as O</span><br> -->
 
-    <sl-select id="difficulty-dropdown" style="display: none">
-      <sl-menu-item value="1">🤡</sl-menu-item>
-      <sl-menu-item value="2">💀</sl-menu-item>
-    </sl-select>
+    <sl-input label="Player 1:" id="player1" ></sl-input>
+    <sl-input label="Player 2:" id="player2" ></sl-input>
+
+    <div id="difficulty-settings" style="display: none">
+      <span>Difficulty: </span>
+      <sl-select id="difficulty-dropdown" value="1">
+        <sl-menu-item value="1">Random  🤡</sl-menu-item>
+        <sl-menu-item value="2">MiniMax 💀</sl-menu-item>
+      </sl-select>
+    </div>
 
     <button id="game-start">Start the game</button>
   </div>
