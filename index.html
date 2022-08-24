@@ -1,30 +1,62 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tic Tac Toe</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.81/dist/themes/light.css" />
+  <script type="module"
+    src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.81/dist/shoelace.js"></script>
+
 </head>
 
 <body>
   <div id="title">Tic Tac Toe!</div>
-  <div id="main-container">
+
+  <div id="options">
+    <sl-radio-group label="Select an option" name="select" value="1">
+      <sl-radio-button value="1">1 vs 1</sl-radio-button>
+      <sl-radio-button value="2">1 vs AI</sl-radio-button>
+    </sl-radio-group>
+
+    <p>First, enter your names!</p>
+    <label for="text">Player 1:</label>
+    <input type="text" id="player1">
+    <span>as X</span>
+    <br>
+    <label for="text" class="player2">Player 2:</label>
+    <input type="text" id="player2" class="player2">
+    <span class="player2">as O</span><br>
+
+    <sl-select id="difficulty-dropdown" style="display: none">
+      <sl-menu-item value="1">🤡</sl-menu-item>
+      <sl-menu-item value="2">💀</sl-menu-item>
+    </sl-select>
+
+    <button id="game-start">Start the game</button>
+  </div>
+
+  <div id="game-container" hidden>
     <div id="board"></div>
     <p id="player"></p>
     <p id="game-info"></p>
     <!-- <template> -->
-      <div id="game-options">
-        <button id="new-game">New game</button>
-      </div>
+    <div id="game-options">
+      <button id="new-game">New game</button>
+    </div>
 
     <!-- </template> -->
   </div>
-    
+
   <script src="script.js"></script>
 </body>
+
 </html>
