@@ -22,7 +22,7 @@
   <div id="title">Tic Tac Toe!</div>
 
   <div id="options">
-    <sl-radio-group label="Select an option" name="select" value="1">
+    <sl-radio-group label="Select an option" name="select" value="1v1">
       <sl-radio-button value="1v1">1 vs 1</sl-radio-button>
       <sl-radio-button value="ai">1 vs AI</sl-radio-button>
     </sl-radio-group>
@@ -48,6 +48,7 @@
     </div>
 
     <button id="game-start">Start the game</button>
+    
   </div>
 
   <div id="game-container" hidden>
@@ -55,9 +56,9 @@
     <p id="player"></p>
     <p id="game-info"></p>
     <!-- <template> -->
-    <div id="game-options">
       <button id="new-game">New game</button>
-    </div>
+      <button id="game-options">Options</button>
+
 
     <!-- </template> -->
   </div>
