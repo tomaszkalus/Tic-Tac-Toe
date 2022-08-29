@@ -1,9 +1,10 @@
-body{
+body {
     font-family: 'Roboto', sans-serif;
     padding: 0;
     margin: 0;
 }
-#title{
+
+#title {
     font-weight: 700;
     text-align: center;
     background-color: #46b2f5;
@@ -11,24 +12,25 @@ body{
     font-size: 25px;
 
 }
-.cell{
-    background-color:rgb(255, 246, 231);
+
+.cell {
+    background-color: rgb(255, 255, 255);
     padding: 20px;
     text-align: center;
     vertical-align: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 50px;
     user-select: none;
 }
 
-.clickable{
+.clickable {
     cursor: pointer;
 }
 
-#board{
+#board {
     display: inline-grid;
     grid-template-columns: 100px 100px 100px;
     grid-template-rows: 100px 100px 100px;
@@ -39,46 +41,32 @@ body{
 
 }
 
-.winning-cell{
+.winning-cell {
     color: red;
 }
 
-.info{
+.info {
     color: red;
 }
 
-#game-container{
+#game-container {
     text-align: center;
     margin-top: 5%;
 }
 
-button{
-    background-color: rgb(255, 246, 231);
-    border-width: 2px;
-    border-color: black;
-    border-style: solid;
-    padding: 10px;
-    cursor: pointer;
-}
-button:hover{
-    border-color: white;
-    background-color: black;
-    color: white;
-}
-
-.symbol{
+.symbol {
     width: 50px;
 }
 
-#options{
+#options {
     background-color: white;
     position: absolute;
     border-style: solid;
     border-width: 2px;
     border-color: black;
-    position: absolute; 
-    left: 0; 
-    right: 0; 
+    position: absolute;
+    left: 0;
+    right: 0;
     top: 150px;
     margin: auto;
     width: 400px;
@@ -86,40 +74,43 @@ button:hover{
     padding: 20px;
 }
 
-#options>p{
+#options>p {
     margin-top: 0;
     margin-bottom: 20px;
 }
 
-#options>input{
+#options>input {
     margin: 5px;
     border-width: 2px;
     border-style: solid;
     border-color: black;
 }
 
-#options>button{
+#options>button {
     margin-top: 20px;
 }
 
-sl-radio-group{
+sl-radio-group {
     margin-bottom: 20px;
 }
 
-#difficulty-dropdown{
+#difficulty-dropdown {
     width: 150px;
     display: inline;
     margin-left: 15px;
 }
 
-#difficulty-settings{
+#difficulty-settings {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 41px;
 
 }
-#player1, #player2{
+
+#player1,
+#player2 {
     margin-bottom: 20px;
     text-align: left;
 }

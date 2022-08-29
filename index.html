@@ -28,39 +28,32 @@
     </sl-radio-group>
 
     <p>First, enter your names!</p>
-    <!-- <label for="text">Player 1:</label>
-    <input type="text" id="player1">
-    <span>as X</span>
-    <br>
-    <label for="text" class="player2">Player 2:</label>
-    <input type="text" id="player2" class="player2">
-    <span class="player2">as O</span><br> -->
-
-    <sl-input label="Player 1:" id="player1" ></sl-input>
-    <sl-input label="Player 2:" id="player2" ></sl-input>
+    <sl-input label="Player 1 (X):" id="player1" ></sl-input>
+    <sl-input label="Player 2 (O):" id="player2" ></sl-input>
 
     <div id="difficulty-settings" style="display: none">
       <span>Difficulty: </span>
-      <sl-select id="difficulty-dropdown" value="1">
-        <sl-menu-item value="1">Random  🤡</sl-menu-item>
-        <sl-menu-item value="2">MiniMax 💀</sl-menu-item>
+      <sl-select id="difficulty-dropdown" value="random">
+        <sl-menu-item value="random">Random  🤡</sl-menu-item>
+        <sl-menu-item value="minimax">MiniMax 💀</sl-menu-item>
       </sl-select>
     </div>
 
-    <button id="game-start">Start the game</button>
+    <!-- <button id="game-startt">Start the game</button> -->
+    <sl-button id="game-start" size="medium">Start the game</sl-button>
     
   </div>
 
-  <div id="game-container" hidden>
+  <div id="game-container" style="display: none">
     <div id="board"></div>
     <p id="player"></p>
     <p id="game-info"></p>
-    <!-- <template> -->
-      <button id="new-game">New game</button>
-      <button id="game-options">Options</button>
+      <sl-button id="new-game" size="medium">New game</sl-button>
+      <sl-button id="game-options" size="medium">Options</sl-button>
+      <!-- <button id="new-game">New game</button>
+      <button id="game-options">Options</button> -->
 
 
-    <!-- </template> -->
   </div>
 
   <script src="script.js"></script>

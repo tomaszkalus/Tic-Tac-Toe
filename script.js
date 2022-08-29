@@ -62,7 +62,7 @@ const GameBoard = (function () {
 
     const getCopy = () => {
         copy = []
-        for(let i=0; i<9; i++){
+        for (let i = 0; i < 9; i++) {
             copy.push(getElement(i))
         }
         return copy
@@ -86,6 +86,11 @@ const Game = (function () {
     const _board = GameBoard;
     const _board_cells = [];
     const _player_text = document.querySelector('#player');
+    const board_container = document.querySelector('#board');
+
+    const game_container = document.querySelector('#game-container');
+    const options_container = document.querySelector('#options');
+    const difficulty_select = document.querySelector('#difficulty-dropdown')
     let _player_list;
     let _ai;
 
@@ -105,8 +110,14 @@ const Game = (function () {
         }
     })
 
+    // Options button
+    document.querySelector('#game-options').addEventListener('click', () => {
+        game_container.style.display = 'none';
+        options_container.style.display = ''
+    })
+
     const InitBoard = function () {
-        const board_container = document.querySelector('#board');
+
         for (let i = 0; i < _board.getDimension() ** 2; i++) {
             const cell = document.createElement("div");
             cell.setAttribute('class', 'cell');
@@ -123,19 +134,23 @@ const Game = (function () {
     InitBoard();
 
     const StartGame = function () {
-        // _ai = !!document.querySelector('#difficulty-dropdown').value;
         const _player1_name = document.querySelector("#player1").value;
         let _player2_name;
-        if (_ai) { _player2_name = '🤡' }
+        if (_ai) {
+            _ai = difficulty_select.value
+            if (_ai == 'random') { _player2_name = '🤡' }
+            else if (_ai = 'minimax') { _player2_name = '💀' }
+        }
         else { _player2_name = document.querySelector("#player2").value; }
 
         _player_list = [Player(_player1_name, "X"), Player(_player2_name, "O")];
-        document.querySelector('#game-container').removeAttribute('hidden');
-        document.querySelector('#options').setAttribute('hidden', '');
+        document.querySelector('#game-container').style.display = '';
+        options_container.style.display = 'none';
+        console.log(_ai)
         NewGame();
     }
 
-    document.querySelector('#game-start').addEventListener('click', StartGame);
+    document.querySelector('#game-start').addEventListener('click', () => { StartGame(_ai) });
 
     const updatePlayerText = function () {
         _player_text.textContent = `Current player: ${_current_player.getName()} (${_current_player.getSymbol()})`;
@@ -160,7 +175,6 @@ const Game = (function () {
         }
     }
 
-    // NewGame()
     document.querySelector('#new-game').addEventListener('click', NewGame);
 
     const MarkWinnersCells = function (cells) {
@@ -196,11 +210,18 @@ const Game = (function () {
     const UserMove = function (field) {
         if (Move(field)) {
             if (_ai) {
-                // const _legal_fields = _board.getLegalFields()
-                // const rand = Math.floor(Math.random() * _legal_fields.length);
-                // setTimeout(() => Move(_legal_fields[rand]), 100)
+                let move;
+                if (_ai == 'minimax') {
+                    const _copy = _board.getCopy()
+                    move = MiniMax(_copy)
+                }
+                else if (_ai == 'random') {
+                    const _legal_fields = _board.getLegalFields()
+                    const rand = Math.floor(Math.random() * _legal_fields.length);
+                    move = _legal_fields[rand]
+                }
+                setTimeout(() => Move(move), 100)
 
-                Move(MiniMax(_board.getCopy()))
             }
         }
     }
@@ -213,87 +234,71 @@ const Game = (function () {
         updatePlayerText();
     }
 
-    const MiniMax = function(board){
+    const MiniMax = function (board) {
 
         let player = 'X', opponent = 'O';
 
-        // This function returns true if there are moves
-        // remaining on the board. It returns false if
-        // there are no moves left to play.
         function isMovesLeft(board) {
             if (board.some(v => { v == '' })) { return true }
             return false;
         }
 
-        // This is the evaluation function as discussed
-        // in the previous article ( http://goo.gl/sJgv68 )
         function evaluate(b, depth) {
             for (let i = 0; i < 3; i++) {
                 // check rows
                 const row = b.slice(i * 3, (i + 1) * 3);
                 if (row[0] == row[1] && row[1] == row[2] && row[0] != '') {
                     if (row[0] == player) {
-                        return 10 - depth;
+                        return 10;
                     }
                     else if (row[0] == opponent) {
-                        return depth -10;
+                        return -10;
                     }
                 };
                 // check cols
-                const col = [b[i], b[i+3], b[i+6]]
+                const col = [b[i], b[i + 3], b[i + 6]]
                 if (col[0] == col[1] && col[1] == col[2] && col[0] != '') {
                     if (col[0] == player) {
-                        return 10 - depth;
+                        return 10;
                     }
                     else if (col[0] == opponent) {
-                        return depth -10;
+                        return -10;
                     }
                 };
             }
             // check diagonals
-            if (b[0] == b[4] && b[4] == b[8] && b[0] !='') {
+            if (b[0] == b[4] && b[4] == b[8] && b[0] != '') {
                 if (b[0] == player) {
-                    return 10 - depth;
+                    return 10;
                 }
                 else if (b[0] == opponent) {
-                    return depth -10;
+                    return -10;
                 }
             }
-            if (b[2] == b[4] && b[4] == b[6] && b[2] !='') {
+            if (b[2] == b[4] && b[4] == b[6] && b[2] != '') {
                 if (b[2] == player) {
-                    return 10 - depth;
+                    return 10;
                 }
                 else if (b[2] == opponent) {
-                    return depth -10;
+                    return -10;
                 }
             }
 
             return 0;
         }
 
-        // This is the minimax function. It
-        // considers all the possible ways
-        // the game can go and returns the
-        // value of the board
         function minimax(board, depth, isMax) {
-            let score = evaluate(board,depth);
+            let score = evaluate(board, depth);
 
-            // If Maximizer has won the game
-            // return his/her evaluated score
             if (score == 10)
-                return score;
+                return score - depth;
 
-            // If Minimizer has won the game
-            // return his/her evaluated score
             if (score == -10)
-                return score;
+                return depth + score;
 
-            // If there are no more moves and
-            // no winner then it is a tie
             if (isMovesLeft(board) == false)
                 return 0;
 
-            // If this maximizer's move
             if (isMax) {
                 let best = -1000;
                 for (let i = 0; i < 9; i++) {
@@ -307,7 +312,6 @@ const Game = (function () {
                 return best;
             }
 
-            // If this minimizer's move
             else {
                 let best = -1000;
                 for (let i = 0; i < 9; i++) {
@@ -321,48 +325,24 @@ const Game = (function () {
                 return best;
             }
         }
-
-        // This will return the best possible
-        // move for the player
         function findBestMove(board) {
             let bestVal = -1000;
             let bestMove;
             bestMove = -1;
-
-            // Traverse all cells, evaluate
-            // minimax function for all empty
-            // cells. And return the cell
-            // with optimal value.
             for (let i = 0; i < 9; i++) {
-                // Check if cell is empty
                 if (board[i] == '') {
-
-                    // Make the move
                     board[i] = player;
-
-                    // compute evaluation function
-                    // for this move.
                     let moveVal = minimax(board, 0, false);
-
-                    // Undo the move
                     board[i] = '';
-
-                    // If the value of the current move
-                    // is more than the best value, then
-                    // update best
                     if (moveVal > bestVal) {
                         bestMove = i;
                         bestVal = moveVal;
                     }
                 }
-                
-            }
 
+            }
             return bestMove;
         }
         return findBestMove(board);
-
     }
-
-
 })()
